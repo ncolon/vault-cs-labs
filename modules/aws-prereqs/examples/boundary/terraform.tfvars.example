@@ -1,0 +1,25 @@
+# --- Common --- #
+friendly_name_prefix = "<example>"
+region = "us-east-1" #Change this to your desired region
+common_tags = {
+  App         = "<boundary-prereqs>"
+  Environment = "<test>"
+  Owner       = "<YourName>"
+}
+
+# --- Networking --- #
+create_vpc                     = <true>
+vpc_cidr                       = "<10.0.0.0/16>"
+api_lb_is_internal             = <true>
+public_subnet_cidrs            = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
+private_subnet_cidrs           = ["10.0.253.0/24", "10.0.254.0/24", "10.0.255.0/24"]
+create_bastion                 = <true>
+bastion_ec2_keypair_name       = "<existing_bastion_keypair_name>"
+bastion_cidr_allow_ingress_ssh = ["<192.168.1.0/24>"]
+
+# --- Secrets Manager Prereq Secrets --- #
+boundary_license_secret_value              = "<iamafaketfelicensekey>"
+boundary_database_password_secret_value    = "<iamafaketfedatabasepassword>"
+boundary_tls_cert_secret_value_base64      = "<iamafaketfetlscertpemthatisbase64encodedintoastring>"
+boundary_tls_privkey_secret_value_base64   = "<iamafaketfetlsprivkeypemthatisbase64encodedintoastring>"
+boundary_tls_ca_bundle_secret_value_base64 = "<iamafaketfetlscabundlepemthatisbase64encodedintoastring>"

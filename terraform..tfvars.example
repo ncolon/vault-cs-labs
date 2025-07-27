@@ -1,0 +1,49 @@
+# --- Common --- #
+friendly_name_prefix = "vault"
+region               = "us-east-1" #Change this to your desired region
+common_tags = {
+  App         = "vault-prereqs"
+  Environment = "techzone"
+  Owner       = "Noel Colon"
+  Email       = "ncolon@us.ibm.com"
+}
+
+# --- Networking --- #
+create_vpc                     = true
+vpc_cidr                       = "10.0.0.0/16"
+lb_is_internal                 = false
+public_subnet_cidrs            = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
+private_subnet_cidrs           = ["10.0.253.0/24", "10.0.254.0/24", "10.0.255.0/24"]
+create_bastion                 = true
+bastion_ec2_keypair_name       = "vault-key"
+bastion_cidr_allow_ingress_ssh = ["0.0.0.0/0"]
+create_ec2_ssh_keypair         = true
+ec2_ssh_keypair_name           = "vault-key"
+
+# --- KMS --- #
+create_kms_cmk              = true
+kms_cmk_alias               = "vault"
+kms_allow_asg_to_cmk        = false
+kms_cmk_deletion_window     = 7
+kms_cmk_enable_key_rotation = true
+
+#------------------------------------------------------------------------------
+# Common
+#------------------------------------------------------------------------------
+vault_fqdn = "vault.server" # Must match TLS cert SAN entry
+
+#------------------------------------------------------------------------------
+# Networking
+#------------------------------------------------------------------------------
+load_balancing_scheme = "EXTERNAL"
+
+#------------------------------------------------------------------------------
+# Compute
+#------------------------------------------------------------------------------
+vm_key_pair_name = "vault-key"
+
+net_ingress_vault_cidr_blocks = ["0.0.0.0/0"]
+net_ingress_ssh_cidr_blocks   = ["0.0.0.0/0"]
+
+vault_raft_performance_multiplier = 1
+vault_version                     = "1.19.5+ent"

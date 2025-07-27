@@ -1,0 +1,30 @@
+# --- Common --- #
+friendly_name_prefix = "<example>"
+common_tags = {
+  App         = "<nomad-prereqs>"
+  Environment = "<test>"
+  Owner       = "<YourName>"
+}
+
+# --- Networking --- #
+create_vpc                     = <true>
+vpc_cidr                       = "<10.0.0.0/16>"
+public_subnet_cidrs            = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
+private_subnet_cidrs           = ["10.0.253.0/24", "10.0.254.0/24", "10.0.255.0/24"]
+create_bastion                 = <true>
+bastion_ec2_keypair_name       = "<existing_bastion_keypair_name>"
+bastion_cidr_allow_ingress_ssh = ["<192.168.1.0/24>"]
+
+# --- Secrets Manager Prereq Secrets --- #
+nomad_license_secret_value               = "<iamafakenomadlicensekey>"
+nomad_gossip_encryption_key_secret_value = "<iamafakenomadgossipencryptionkey>"
+nomad_tls_cert_secret_value_base64       = "<iamafakenomadtlscertpemthatisbase64encodedintoastring>"
+nomad_tls_privkey_secret_value_base64    = "<iamafakenomadtlsprivkeypemthatisbase64encodedintoastring>"
+nomad_tls_ca_bundle_secret_value_base64  = "<iamafakenomadtlscabundlepemthatisbase64encodedintoastring>"
+
+# --- KMS --- #
+create_kms_cmk              = <true>
+kms_cmk_alias               = "<nomad>"
+kms_allow_asg_to_cmk        = <true>
+kms_cmk_deletion_window     = <7>
+kms_cmk_enable_key_rotation = <true>
