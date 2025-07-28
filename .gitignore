@@ -40,3 +40,4 @@ terraform.rc
 *.hclic
 certs/
 .terraform.lock.hcl
+*.plan

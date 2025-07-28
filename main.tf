@@ -6,12 +6,26 @@ module "tls" {
   source = "./modules/tls"
 }
 
+resource "random_string" "random" {
+  length  = 6
+  special = false
+  upper   = false
+}
+
+locals {
+  random_prefix = "${var.friendly_name_prefix}-${random_string.random.result}"
+  merged_tags = merge(
+    var.common_tags,
+    { Instance = local.random_prefix }
+  )
+}
+
 module "prereqs" {
   source = "./modules/aws-prereqs"
 
   # --- Common --- #
-  friendly_name_prefix = var.friendly_name_prefix
-  common_tags          = var.common_tags
+  friendly_name_prefix = local.random_prefix
+  common_tags          = local.merged_tags
 
   # --- Networking --- #
   create_vpc                     = var.create_vpc
@@ -46,7 +60,7 @@ module "vault" {
   #------------------------------------------------------------------------------
   # Common
   #------------------------------------------------------------------------------
-  friendly_name_prefix = var.friendly_name_prefix
+  friendly_name_prefix = local.random_prefix
   vault_fqdn           = var.vault_fqdn
 
   #------------------------------------------------------------------------------
