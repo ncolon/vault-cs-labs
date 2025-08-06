@@ -48,7 +48,7 @@ resource "aws_secretsmanager_secret_version" "vault_license" {
 # }
 
 #------------------------------------------------------------------------------
-# TLS Certificate (PEM format, base64-encoded)
+# TLS Certificate (PEM format)
 #------------------------------------------------------------------------------
 resource "aws_secretsmanager_secret" "vault_tls_cert" {
   count = var.vault_tls_cert_secret_value_base64 != null ? 1 : 0

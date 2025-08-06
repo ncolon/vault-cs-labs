@@ -2,10 +2,6 @@ provider "aws" {
   region = var.region
 }
 
-module "tls" {
-  source = "./modules/tls"
-}
-
 resource "random_string" "random" {
   length  = 6
   special = false
@@ -18,6 +14,10 @@ locals {
     var.common_tags,
     { Instance = local.random_prefix }
   )
+}
+
+module "tls" {
+  source = "./modules/tls"
 }
 
 module "prereqs" {
@@ -42,25 +42,26 @@ module "prereqs" {
   # --- Secrets Manager Prereq Secrets --- #
   vault_license_secret_value = file("vault.hclic")
   #vault_encryption_password_secret_value  = var.vault_encryption_password_secret_value
-  vault_tls_cert_secret_value_base64      = module.tls.tls_cert_content_base64
-  vault_tls_privkey_secret_value_base64   = module.tls.tls_key_content_base64
-  vault_tls_ca_bundle_secret_value_base64 = module.tls.ca_cert_content_base64
+  vault_tls_cert_secret_value_base64      = base64encode(module.tls.tls_cert_content)
+  vault_tls_privkey_secret_value_base64   = base64encode(module.tls.tls_key_content)
+  vault_tls_ca_bundle_secret_value_base64 = base64encode(module.tls.ca_cert_content)
 
   # --- KMS --- #
   create_kms_cmk              = var.create_kms_cmk
-  kms_cmk_alias               = var.kms_cmk_alias
+  kms_cmk_alias               = "${var.kms_cmk_alias}-${random_string.random.result}"
   kms_allow_asg_to_cmk        = var.kms_allow_asg_to_cmk
   kms_cmk_deletion_window     = var.kms_cmk_deletion_window
   kms_cmk_enable_key_rotation = var.kms_cmk_enable_key_rotation
 }
 
 module "vault" {
+  count  = var.vault_count
   source = "github.com/hashicorp/terraform-aws-vault-enterprise-hvd?ref=0.2.0"
 
   #------------------------------------------------------------------------------
   # Common
   #------------------------------------------------------------------------------
-  friendly_name_prefix = local.random_prefix
+  friendly_name_prefix = "${local.random_prefix}-${count.index}"
   vault_fqdn           = var.vault_fqdn
 
   #------------------------------------------------------------------------------
@@ -90,4 +91,16 @@ module "vault" {
   vm_key_pair_name = var.vm_key_pair_name
   vm_instance_type = "t3a.medium"
   asg_node_count   = 3
+}
+
+module "clustercomm" {
+  source     = "./modules/clustercomms"
+  count      = var.vault_count > 1 ? 1 : 0
+  depends_on = [module.vault]
+
+  vault_count   = var.vault_count
+  prefix        = local.random_prefix
+  net_vpc_id    = module.prereqs.vpc_id
+  resource_tags = var.common_tags
+  # net_vault_subnet_ids = module.prereqs.private_subnet_ids
 }

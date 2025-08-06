@@ -2,10 +2,8 @@
 friendly_name_prefix = "vault"
 region               = "us-east-1" #Change this to your desired region
 common_tags = {
-  App         = "vault-prereqs"
+  App         = "vault"
   Environment = "techzone"
-  Owner       = "Noel Colon"
-  Email       = "ncolon@us.ibm.com"
 }
 
 # --- Networking --- #
@@ -14,7 +12,7 @@ vpc_cidr                       = "10.0.0.0/16"
 lb_is_internal                 = false
 public_subnet_cidrs            = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
 private_subnet_cidrs           = ["10.0.253.0/24", "10.0.254.0/24", "10.0.255.0/24"]
-create_bastion                 = true
+create_bastion                 = false
 bastion_ec2_keypair_name       = "vault-key"
 bastion_cidr_allow_ingress_ssh = ["0.0.0.0/0"]
 create_ec2_ssh_keypair         = true
@@ -45,5 +43,7 @@ vm_key_pair_name = "vault-key"
 net_ingress_vault_cidr_blocks = ["0.0.0.0/0"]
 net_ingress_ssh_cidr_blocks   = ["0.0.0.0/0"]
 
-vault_raft_performance_multiplier = 1
-vault_version                     = "1.19.5+ent"
+# https://github.com/hashicorp/terraform-aws-vault-enterprise-hvd/pull/31
+vault_raft_performance_multiplier = 5
+
+vault_version = "1.19.5+ent"

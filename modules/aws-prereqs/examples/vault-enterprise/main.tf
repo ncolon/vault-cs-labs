@@ -33,8 +33,8 @@ module "prereqs" {
   # --- Secrets Manager Prereq Secrets --- #
   vault_license_secret_value = var.vault_license_secret_value
   #vault_encryption_password_secret_value  = var.vault_encryption_password_secret_value
-  vault_tls_cert_secret_value_base64      = var.vault_tls_cert_secret_value_base64
-  vault_tls_privkey_secret_value_base64   = var.vault_tls_privkey_secret_value_base64
+  vault_tls_cert_secret_value             = var.vault_tls_cert_secret_value
+  vault_tls_privkey_secret_value          = var.vault_tls_privkey_secret_value
   vault_tls_ca_bundle_secret_value_base64 = var.vault_tls_ca_bundle_secret_value_base64
 
   # --- KMS --- #

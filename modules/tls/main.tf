@@ -59,8 +59,8 @@ resource "tls_cert_request" "vault" {
     locality            = "Raleigh"
   }
 
-  dns_names    = ["vault.server"]
-  ip_addresses = ["127.0.0.1"]
+  dns_names    = var.cert_fqdns
+  ip_addresses = var.cert_ips
 }
 
 # 5. Sign TLS certificate using the CA
@@ -98,21 +98,4 @@ resource "local_file" "tls_key" {
 resource "local_file" "tls_cert" {
   content  = tls_locally_signed_cert.vault.cert_pem
   filename = "${path.cwd}/certs/tls.crt"
-}
-
-output "ca_cert_content_base64" {
-  value = base64encode(local_file.ca_cert.content)
-}
-
-output "tls_key_content_base64" {
-  sensitive = true
-  value     = base64encode(local_file.tls_key.content)
-}
-
-output "tls_cert_content_base64" {
-  value = base64encode(local_file.tls_cert.content)
-}
-
-output "tls_cert_fullpath" {
-  value = local_file.ca_cert.filename
 }

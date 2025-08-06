@@ -635,3 +635,10 @@ variable "stickiness_enabled" {
   description = "Enable sticky sessions by client IP address for the load balancer."
   default     = true
 }
+
+
+variable "vault_count" {
+  type        = number
+  description = "How many Vault clusters do you want to deploy?"
+  default     = 1
+}

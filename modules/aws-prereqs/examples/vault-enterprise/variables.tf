@@ -136,7 +136,7 @@ variable "vault_tls_cert_secret_name" {
   default     = "vault-tls-cert-base64"
 }
 
-variable "vault_tls_cert_secret_value_base64" {
+variable "vault_tls_cert_secret_value" {
   type        = string
   description = "Base64-encoded string value of vault TLS certificate in PEM format to create as AWS Secrets Manager secret."
   default     = null
@@ -148,7 +148,7 @@ variable "vault_tls_privkey_secret_name" {
   default     = "vault-tls-privkey-base64"
 }
 
-variable "vault_tls_privkey_secret_value_base64" {
+variable "vault_tls_privkey_secret_value" {
   type        = string
   description = "Base64-encoded string value of vault TLS private key in PEM format to create as AWS Secrets Manager secret."
   default     = null
