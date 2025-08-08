@@ -39,5 +39,9 @@ terraform.rc
 
 *.hclic
 certs/
+volumes/
 .terraform.lock.hcl
 *.plan
+init-*.txt
+vault-*.yaml
+

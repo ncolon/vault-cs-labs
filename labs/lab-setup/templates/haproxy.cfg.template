@@ -1,0 +1,57 @@
+# Vault has a http health endpoint on /v1/sys/health that returns different http codes
+# depending on the status of the running vault instance.
+#
+# See: https://developer.hashicorp.com/vault/api-docs/system/health#read-health-information
+#
+#    * 200 if initialized, unsealed, and active
+#    * 429 if unsealed and standby
+#    * 472 if data recovery mode replication secondary and active
+#    * 473 if performance standby
+#    * 501 if not initialized
+#    * 503 if sealed
+global
+  log /dev/log local0
+
+defaults
+  log global
+  option httplog
+
+
+# Primary https listener
+frontend vault_https_api
+  mode tcp
+  option tcplog
+  timeout client 30000
+  bind *:8200
+  description Vault over https
+  default_backend vault_https_api_backend
+
+frontend vault_https_cluster
+  mode tcp
+  option tcplog
+  timeout client 30000
+  bind *:8201
+  description Vault over https
+  default_backend vault_https_cluster_backend
+
+backend vault_https_api_backend
+  mode tcp
+  timeout check 5000
+  timeout server 30000
+  timeout connect 5000
+#  option httpchk GET /v1/sys/health?standbyok=true&perfstandbyok=true&activecode=200&standbycode=429&drsecondarycode=472&performancestandbycode=473&sealedcode=503&uninitcode=200
+  option httpchk GET /v1/sys/health
+  http-check expect rstatus ^(200|472|473|429)$
+  server vault1 ${CLUSTERNAME}-1:8200
+  server vault2 ${CLUSTERNAME}-2:8200
+  server vault3 ${CLUSTERNAME}-3:8200
+
+backend vault_https_cluster_backend
+  mode tcp
+  timeout check 5000
+  timeout server 30000
+  timeout connect 5000
+  server vault1 ${CLUSTERNAME}-1:8200
+  server vault2 ${CLUSTERNAME}-2:8200
+  server vault3 ${CLUSTERNAME}-3:8200
+

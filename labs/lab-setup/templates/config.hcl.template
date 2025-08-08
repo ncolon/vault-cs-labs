@@ -1,0 +1,40 @@
+disable_mlock = true
+ui            = true    
+
+default_lease_ttl = "1h"
+max_lease_ttl     = "768h"
+
+listener "tcp" {
+  address = "[::]:8200"
+  tls_cert_file      = "/opt/vault/tls/tls.crt"
+  tls_key_file       = "/opt/vault/tls/tls.key"
+  tls_client_ca_file = "/opt/vault/tls/ca.pem"
+  tls_disable_client_certs           = true
+  tls_require_and_verify_client_cert = false
+}
+
+storage "raft" {
+  path    = "/opt/vault/data"
+  node_id = "${INSTANCE}"
+  performance_multiplier = 5
+
+  retry_join {
+    leader_api_addr = "https://${CLUSTERNAME}-1:8200"
+    leader_ca_cert_file = "/opt/vault/tls/ca.pem"
+  }
+  retry_join {
+    leader_api_addr = "https://${CLUSTERNAME}-2:8200"
+    leader_ca_cert_file = "/opt/vault/tls/ca.pem"
+  }
+  retry_join {
+    leader_api_addr = "https://${CLUSTERNAME}-3:8200"
+    leader_ca_cert_file = "/opt/vault/tls/ca.pem"
+  }
+}
+
+license_path  = "/opt/vault/vault.hclic"
+
+api_addr      = "https://${INSTANCE}:8200"
+cluster_addr  = "https://${INSTANCE}:8201"
+
+plugin_directory = "/opt/vault/plugins"

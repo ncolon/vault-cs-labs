@@ -1,0 +1,20 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: ${INSTANCE}
+  labels:
+    app: ${CLUSTERNAME}
+spec:
+  containers:
+  - name: vault-enterprise
+    image: vault-enterprise
+    volumeMounts:
+    - mountPath: /opt/vault:z
+      name: ${INSTANCE}-dir
+      readOnly: false
+  volumes:
+  - name: ${INSTANCE}-dir
+    hostPath:
+      path: ${PWD}/volumes/${INSTANCE}
+      type: Directory

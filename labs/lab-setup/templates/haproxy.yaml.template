@@ -1,0 +1,23 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: haproxy-${CLUSTERNAME}
+  labels:
+    app: haproxy-${CLUSTERNAME}
+spec:
+  containers:
+  - name: haproxy
+    image: haproxy
+    ports:
+      - containerPort: 8200
+        hostPort: ${PORT}
+    volumeMounts:
+    - mountPath: /usr/local/etc/haproxy:z
+      name: ${CLUSTERNAME}-dir
+      readOnly: false
+  volumes:
+  - name: ${CLUSTERNAME}-dir
+    hostPath:
+      path: ${PWD}/volumes/haproxy-${CLUSTERNAME}
+      type: Directory
