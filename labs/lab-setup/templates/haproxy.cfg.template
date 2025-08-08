@@ -42,16 +42,16 @@ backend vault_https_api_backend
 #  option httpchk GET /v1/sys/health?standbyok=true&perfstandbyok=true&activecode=200&standbycode=429&drsecondarycode=472&performancestandbycode=473&sealedcode=503&uninitcode=200
   option httpchk GET /v1/sys/health
   http-check expect rstatus ^(200|472|429)$
-  server vault1 ${CLUSTERNAME}-1:8200
-  server vault2 ${CLUSTERNAME}-2:8200
-  server vault3 ${CLUSTERNAME}-3:8200
+  server vault1 ${CLUSTERNAME}-1:8200 ssl verify none check
+  server vault2 ${CLUSTERNAME}-2:8200 ssl verify none check
+  server vault3 ${CLUSTERNAME}-3:8200 ssl verify none check
 
 backend vault_https_cluster_backend
   mode tcp
   timeout check 5000
   timeout server 30000
   timeout connect 5000
-  server vault1 ${CLUSTERNAME}-1:8200
-  server vault2 ${CLUSTERNAME}-2:8200
-  server vault3 ${CLUSTERNAME}-3:8200
+  server vault1 ${CLUSTERNAME}-1:8201
+  server vault2 ${CLUSTERNAME}-2:8201
+  server vault3 ${CLUSTERNAME}-3:8201
 
