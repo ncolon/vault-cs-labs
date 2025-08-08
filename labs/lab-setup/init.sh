@@ -13,7 +13,7 @@ fi
 ARCH=$(uname -m)
 
 case $ARCH in
-    x86_64) 
+    x86_64)
         ARCH_ALIAS=amd64
         ;;
     aarch64)
@@ -48,7 +48,7 @@ for CLUSTERNAME in vault-primary vault-dr vault-replication; do
     if [[ ! -z $PUBLIC_IP ]] ; then
         IP_LIST=$"IP.1:127.0.0.1,IP.2:$PUBLIC_IP"
     fi
-    
+
     openssl req -newkey rsa:2048 -nodes -days 365000 -keyout $CERTS/${CLUSTERNAME}-tls.key -out $CERTS/${CLUSTERNAME}-tls.csr \
         -subj "/C=US/ST=North Carolina/L=Raleigh/O=IBM/OU=WW CS/CN=${CLUSTERNAME}" \
         -addext "subjectAltName=DNS.1:${CLUSTERNAME},DNS.2:${CLUSTERNAME}-1,DNS.3:${CLUSTERNAME}-2,DNS.4:${CLUSTERNAME}-3, \
@@ -62,7 +62,7 @@ for CLUSTERNAME in vault-primary vault-dr vault-replication; do
 
     for i in $(seq 1 3); do
         export INSTANCE="${CLUSTERNAME}-${i}"
-        
+
         cat templates/vault.yaml.template | envsubst >> ${CLUSTERNAME}.yaml
 
 
@@ -70,7 +70,7 @@ for CLUSTERNAME in vault-primary vault-dr vault-replication; do
         chmod 755 volumes/${INSTANCE}/tls
         chmod 777 volumes/${INSTANCE}/data
 
-        
+
         cp $CERTS/ca-cert.pem volumes/${INSTANCE}/tls/ca.pem
         cp $CERTS/${CLUSTERNAME}-tls.key volumes/${INSTANCE}/tls/tls.key
         cp $CERTS/${CLUSTERNAME}-tls.crt volumes/${INSTANCE}/tls/tls.crt
@@ -80,7 +80,7 @@ for CLUSTERNAME in vault-primary vault-dr vault-replication; do
 
     done
 
-    
+
     case ${CLUSTERNAME} in
         vault-dr)
             export PORT=8210 ;;
