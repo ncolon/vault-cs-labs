@@ -121,7 +121,7 @@ resource "vault_generic_endpoint" "chun_ldap" {
 }
 
 resource "vault_generic_endpoint" "alice_admin_ns" {
-  path = "auth/${vault_auth_backend.fake_ldap.path}/users/alice"
+  path = "auth/${vault_auth_backend.fake_ldap_admin_ns.path}/users/alice"
   data_json = jsonencode({
     password = "thispassword"
   })
@@ -174,12 +174,12 @@ path "kv-v2/data/backdoor" {
 EOT
 }
 
-# resource "vault_policy" "bank_info_ro" {
-#   name      = "bank-info-ro"
-#   namespace = "admin/finance"
-#   policy    = <<EOT
-# path "kv-v2/data/bank-info" {
-#   capabilities = ["read"]
-# }
-# EOT
-# }
+resource "vault_policy" "bank_info_ro" {
+  name      = "finance-ro"
+  namespace = vault_namespace.finance.path_fq
+  policy    = <<EOT
+path "kv-v2/data/bank-info" {
+  capabilities = ["read"]
+}
+EOT
+}
