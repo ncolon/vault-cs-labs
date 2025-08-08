@@ -19,11 +19,11 @@ defaults
 
 # Primary https listener
 frontend vault_https_api
-  mode tcp
+  mode http
   option tcplog
   timeout client 30000
-  bind *:8200
-  description Vault over https
+  bind *:8200 ssl crt /usr/local/etc/haproxy/tls.crt
+  description Vault API over https
   default_backend vault_https_api_backend
 
 frontend vault_https_cluster
@@ -31,17 +31,17 @@ frontend vault_https_cluster
   option tcplog
   timeout client 30000
   bind *:8201
-  description Vault over https
+  description Vault cluster over tcp
   default_backend vault_https_cluster_backend
 
 backend vault_https_api_backend
-  mode tcp
+  mode http
   timeout check 5000
   timeout server 30000
   timeout connect 5000
 #  option httpchk GET /v1/sys/health?standbyok=true&perfstandbyok=true&activecode=200&standbycode=429&drsecondarycode=472&performancestandbycode=473&sealedcode=503&uninitcode=200
   option httpchk GET /v1/sys/health
-  http-check expect rstatus ^(200|472|473|429)$
+  http-check expect rstatus ^(200|472|429)$
   server vault1 ${CLUSTERNAME}-1:8200
   server vault2 ${CLUSTERNAME}-2:8200
   server vault3 ${CLUSTERNAME}-3:8200

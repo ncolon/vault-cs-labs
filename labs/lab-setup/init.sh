@@ -6,6 +6,10 @@ test -e vault.hclic || {
     exit 1
 }
 
+if [[ $USER == "itzuser" ]] ; then
+    umask 022
+fi
+
 ARCH=$(uname -m)
 
 case $ARCH in
@@ -40,10 +44,15 @@ for CLUSTERNAME in vault-primary vault-dr vault-replication; do
 
     echo $CERTS
 
+    IP_LIST="IP.1:127.0.0.1"
+    if [[ ! -z $PUBLIC_IP ]] ; then
+        IP_LIST=$"IP.1:127.0.0.1,IP.2:$PUBLIC_IP"
+    fi
+    
     openssl req -newkey rsa:2048 -nodes -days 365000 -keyout $CERTS/${CLUSTERNAME}-tls.key -out $CERTS/${CLUSTERNAME}-tls.csr \
         -subj "/C=US/ST=North Carolina/L=Raleigh/O=IBM/OU=WW CS/CN=${CLUSTERNAME}" \
-        -addext "subjectAltName=DNS.1:${CLUSTERNAME},DNS.2:${CLUSTERNAME}-1,DNS.3:${CLUSTERNAME}-2,DNS.4:${CLUSTERNAME}-3,DNS.5:${CLUSTERNAME}-4,DNS.6:${CLUSTERNAME}-5, \
-                DNS.6:vault.server,DNS.7:localhost,DNS.8:haproxy-${CLUSTERNAME},IP.1:127.0.0.1" \
+        -addext "subjectAltName=DNS.1:${CLUSTERNAME},DNS.2:${CLUSTERNAME}-1,DNS.3:${CLUSTERNAME}-2,DNS.4:${CLUSTERNAME}-3, \
+                DNS.5:vault.server,DNS.6:localhost,DNS.8:haproxy-${CLUSTERNAME},${IP_LIST}" \
         -addext 'basicConstraints=critical,CA:FALSE' \
         -addext 'keyUsage=digitalSignature' \
         -addext 'extendedKeyUsage=serverAuth'
@@ -58,6 +67,8 @@ for CLUSTERNAME in vault-primary vault-dr vault-replication; do
 
 
         mkdir -p volumes/${INSTANCE}/tls volumes/${INSTANCE}/data
+        chmod 755 volumes/${INSTANCE}/tls
+        chmod 777 volumes/${INSTANCE}/data
 
         
         cp $CERTS/ca-cert.pem volumes/${INSTANCE}/tls/ca.pem
@@ -76,7 +87,11 @@ for CLUSTERNAME in vault-primary vault-dr vault-replication; do
         vault-replication)
             export PORT=8220 ;;
         *)
-            export PORT=8200 ;;
+            export PORT=8200
+            if [[ $USER == "itzuser" ]] ; then
+                export PORT=12443
+            fi
+            ;;
     esac
 
     cat templates/haproxy.yaml.template | envsubst >> ${CLUSTERNAME}.yaml
@@ -86,6 +101,6 @@ for CLUSTERNAME in vault-primary vault-dr vault-replication; do
     cat templates/haproxy.cfg.template | envsubst > volumes/haproxy-${CLUSTERNAME}/haproxy.cfg
     cp $CERTS/${CLUSTERNAME}-tls.crt volumes/haproxy-${CLUSTERNAME}/tls.crt
     cp $CERTS/${CLUSTERNAME}-tls.key volumes/haproxy-${CLUSTERNAME}/tls.crt.key
+
+    chmod -R go+r volumes
 done
-
-
