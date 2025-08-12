@@ -44,4 +44,7 @@ volumes/
 *.plan
 init-*.txt
 vault-*.yaml
+primary.sh
+dr.sh
+replication.sh
 

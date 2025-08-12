@@ -11,20 +11,11 @@ podman exec -ti vault-primary-1-vault-enterprise vault operator unseal $VAULT_SE
 podman exec -ti vault-primary-1-vault-enterprise vault operator unseal $VAULT_SEAL_KEY2
 podman exec -ti vault-primary-1-vault-enterprise vault operator unseal $VAULT_SEAL_KEY3
 sleep 2
-podman exec -ti vault-primary-1-vault-enterprise vault status
-sleep 1
 
 podman exec -ti vault-primary-2-vault-enterprise vault operator unseal $VAULT_SEAL_KEY1
 podman exec -ti vault-primary-2-vault-enterprise vault operator unseal $VAULT_SEAL_KEY2
 podman exec -ti vault-primary-2-vault-enterprise vault operator unseal $VAULT_SEAL_KEY3
-sleep 2
-podman exec -ti vault-primary-2-vault-enterprise vault status
-sleep 1
 
 podman exec -ti vault-primary-3-vault-enterprise vault operator unseal $VAULT_SEAL_KEY1
 podman exec -ti vault-primary-3-vault-enterprise vault operator unseal $VAULT_SEAL_KEY2
 podman exec -ti vault-primary-3-vault-enterprise vault operator unseal $VAULT_SEAL_KEY3
-sleep 2
-podman exec -ti vault-primary-3-vault-enterprise vault status
-sleep 1 
-
