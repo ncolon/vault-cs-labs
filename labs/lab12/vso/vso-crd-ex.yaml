@@ -1,0 +1,36 @@
+---
+apiVersion: secrets.hashicorp.com/v1beta1
+kind: VaultConnection
+metadata:
+  namespace: default
+  name: vault-connection
+spec:
+  # address to the Vault server.
+  address: https://$VAULT_IP:8200
+  skipTLSVerify: true
+---
+apiVersion: secrets.hashicorp.com/v1beta1
+kind: VaultAuth
+metadata:
+  name: vault-auth
+spec:
+  vaultConnectionRef: vault-connection
+  method: kubernetes
+  mount: kubernetes
+  kubernetes:
+    role: vso
+    serviceAccount: vault-auth
+---
+apiVersion: secrets.hashicorp.com/v1beta1
+kind: VaultStaticSecret
+metadata:
+  name: vault-static-secret
+spec:
+  vaultAuthRef: vault-auth
+  mount: k8s-vso-user
+  type: kv-v2
+  path:  config
+  refreshAfter: 10s
+  destination:
+    create: true
+    name: vso-kv

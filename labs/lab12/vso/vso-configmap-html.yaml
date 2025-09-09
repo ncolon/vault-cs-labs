@@ -1,0 +1,21 @@
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-html-template
+data:
+  index.html: |
+    <!DOCTYPE html>
+    <html>
+    <body>
+    <p>Some secrets:</p>
+    <br>
+    <ul>
+    <li><pre>Username: ${SECRET_USERNAME}</pre></li>
+    <li><pre>Password: ${SECRET_PASSWORD}</pre></li>
+    </ul>
+    {{ end }}
+    </body>
+    </html>
+

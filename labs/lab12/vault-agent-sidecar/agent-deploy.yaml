@@ -1,0 +1,79 @@
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vault-agent-deploy
+  labels:
+    app: vault-agent-deploy
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+    # rollingUpdate:
+    #   maxSurge: 2
+    #   maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: vault-agent-deploy
+  template:
+    metadata:
+      labels:
+        app: vault-agent-deploy
+    spec:
+      serviceAccountName: vault-auth
+      initContainers:
+      containers:
+      - image: hashicorp/vault:1.17.5
+        name: vault-agent
+        args:
+          - agent
+          - -config=/etc/vault/vault-agent-sidecar-config.hcl
+          - -log-level=debug
+        env:
+          - name: VAULT_ADDR
+            value: "https://$VAULT_IP:8200"
+          - name: VAULT_CACERT
+            value: /opt/config/vault-server-cert.pem
+        volumeMounts:
+          - mountPath: /etc/vault
+            name: config
+          - mountPath: /etc/secrets
+            name: shared-data
+          - name: config-volume
+            mountPath: /opt/config
+      - image: nginx:alpine3.20
+        name: nginx-container
+        ports:
+          - containerPort: 80
+        volumeMounts:
+          - mountPath: /usr/share/nginx/html
+            name: shared-data
+      # - name: svcutils
+      #   image: nicolaka/netshoot:v0.13
+      #   command: ["/bin/bash"]
+      #   args: ["-c", "while true; do sleep 60; done;"]
+      #   volumeMounts:
+      #   - name: config-volume
+      #     mountPath: /opt/config
+      #   env:
+      #     - name: VAULT_ADDR
+      #       value: "https://$VAULT_IP:8200"
+      #     - name: VAULT_CACERT
+      #       value: /opt/config/vault-server-cert.pem
+      #       # valueFrom:
+      #       #   configMapKeyRef:
+      #       #     name: ca-pemstore
+      #       #     key: vault-server-cert.pem
+      volumes:
+      - configMap:
+          items:
+            - key: vault-agent-sidecar-config.hcl
+              path: vault-agent-sidecar-config.hcl
+          name: example-vault-agent-sidecar-config
+        name: config
+      - name: config-volume
+        configMap:
+          name: ca-pemstore
+      - emptyDir: {}
+        name: shared-data

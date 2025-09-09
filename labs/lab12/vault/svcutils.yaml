@@ -1,0 +1,40 @@
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: svcutils
+  labels:
+    app: svcutils
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: svcutils
+  template:
+    metadata:
+      labels:
+        app: svcutils
+    spec:
+      serviceAccountName: vault-auth
+      containers:
+      - name: svcutils
+        image: nicolaka/netshoot:v0.13
+        command: ["/bin/bash"]
+        args: ["-c", "while true; do sleep 60; done;"]
+        volumeMounts:
+        - name: config-volume
+          mountPath: /opt/config
+        env:
+          - name: VAULT_ADDR
+            value: "https://$VAULT_IP:8200"
+          - name: VAULT_CACERT
+            value: /opt/config/vault-server-cert.pem
+            # valueFrom:
+            #   configMapKeyRef:
+            #     name: ca-pemstore
+            #     key: vault-server-cert.pem
+      volumes:
+      - name: config-volume
+        configMap:
+          name: ca-pemstore

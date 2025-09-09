@@ -1,0 +1,52 @@
+---
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: vault-agent-init
+  namespace: default
+spec:
+  serviceAccountName: vault-auth
+
+  volumes:
+    - configMap:
+        items:
+          - key: vault-agent-config.hcl
+            path: vault-agent-config.hcl
+        name: example-vault-agent-config
+      name: config
+    - name: config-volume
+      configMap:
+        name: ca-pemstore
+    - emptyDir: {}
+      name: shared-data
+
+  initContainers:
+    - args:
+        - agent
+        - -config=/etc/vault/vault-agent-config.hcl
+        - -log-level=debug
+      env:
+        - name: VAULT_ADDR
+          value: "https://$VAULT_IP:8200"
+        - name: VAULT_CACERT
+          value: /opt/config/vault-server-cert.pem
+      image: hashicorp/vault:1.17.5
+      name: vault-agent
+      volumeMounts:
+        - mountPath: /etc/vault
+          name: config
+        - mountPath: /etc/secrets
+          name: shared-data
+        - name: config-volume
+          mountPath: /opt/config
+
+  containers:
+    - image: nginx:alpine3.20
+      name: nginx-container
+      ports:
+        - containerPort: 80
+      volumeMounts:
+        - mountPath: /usr/share/nginx/html
+          name: shared-data
+
