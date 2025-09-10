@@ -1,6 +1,6 @@
-vault policy write vso-kv-ro /root/config/vso/vso-kv-ro.policy.hcl
+vault policy write vso-kv-ro ./vso/vso-kv-ro.policy.hcl
 
-vault policy write agent-kv-ro /root/config/vault-agent/agent-kv-ro.policy.hcl
+vault policy write agent-kv-ro ./vault-agent/agent-kv-ro.policy.hcl
 
 export ISSUER="$(kubectl get --raw /.well-known/openid-configuration | jq -r '.issuer')"
 
@@ -39,13 +39,13 @@ vault write auth/kubernetes/role/agent \
     token_policies=agent-kv-ro \
     ttl=24h
 
-kubectl -n default create configmap ca-pemstore --from-file=/root/config/vault/vault-server-cert.pem
+kubectl -n default create configmap ca-pemstore --from-file=./vault/vault-server-cert.pem
 
-sed -i "s/\$VAULT_IP/$VAULT_IP/g" /root/config/vault/svcutils.yaml
-sed -i "s/\$VAULT_IP/$VAULT_IP/g" /root/config/vault-agent/agent-app-spec.yaml
-sed -i "s/\$VAULT_IP/$VAULT_IP/g" /root/config/vault-agent-sidecar/agent-deploy.yaml
-sed -i "s/\$VAULT_IP/$VAULT_IP/g" /root/config/vault-agent-to-vso/agent-deploy.yaml
-sed -i "s/\$VAULT_IP/$VAULT_IP/g" /root/config/vso/vso-crd.yaml
-sed -i "s/\$VAULT_IP/$VAULT_IP/g" /root/config/vso/vso-crd-ex.yaml
+sed -i "s/\$VAULT_IP/$VAULT_IP/g" ./vault/svcutils.yaml
+sed -i "s/\$VAULT_IP/$VAULT_IP/g" ./vault-agent/agent-app-spec.yaml
+sed -i "s/\$VAULT_IP/$VAULT_IP/g" ./vault-agent-sidecar/agent-deploy.yaml
+sed -i "s/\$VAULT_IP/$VAULT_IP/g" ./vault-agent-to-vso/agent-deploy.yaml
+sed -i "s/\$VAULT_IP/$VAULT_IP/g" ./vso/vso-crd.yaml
+sed -i "s/\$VAULT_IP/$VAULT_IP/g" ./vso/vso-crd-ex.yaml
 
-kubectl apply -f /root/config/vault/svcutils.yaml
+kubectl apply -f ./vault/svcutils.yaml
