@@ -2,7 +2,6 @@
 apiVersion: secrets.hashicorp.com/v1beta1
 kind: VaultConnection
 metadata:
-  namespace: default
   name: vault-connection
 spec:
   # address to the Vault server.
