@@ -16,7 +16,7 @@ metadata:
 type: kubernetes.io/service-account-token
 EOF
 
-export SA_JWT_TOKEN=$(oc get secret vault-auth \
+export SA_JWT_TOKEN=$(oc get secret vault-token \
     --output 'go-template={{ .data.token }}' | base64 --decode)
 
 export SA_CA_CRT=$(oc get cm kube-root-ca.crt -o jsonpath ='{.data.ca\.crt}')
