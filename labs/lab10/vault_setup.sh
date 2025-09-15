@@ -19,7 +19,7 @@ EOF
 export SA_JWT_TOKEN=$(oc get secret vault-token \
     --output 'go-template={{ .data.token }}' | base64 --decode)
 
-export SA_CA_CRT=$(oc get cm kube-root-ca.crt -o jsonpath ='{.data.ca\.crt}')
+export SA_CA_CRT=$(oc get cm kube-root-ca.crt -o jsonpath='{.data.ca\.crt}')
 
 export K8S_HOST=$(oc whoami --show-server)
 
@@ -58,3 +58,9 @@ oc apply -f ./vault/svcutils.yaml
 
 oc apply -f ./vso/vso-rbac.yaml
 oc adm policy add-cluster-role-to-user vso-cluster-role -z $SA_NAME
+
+vault secrets enable -path=agent kv-v2
+vault kv put -mount=agent config \
+    username='agent-user' \
+    password='agent-suP3rsec(et!' \
+    ttl='30s'

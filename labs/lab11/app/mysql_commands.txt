@@ -1,0 +1,6 @@
+ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password;
+ALTER USER 'root'@'localhost' IDENTIFIED BY 'password';
+CREATE USER 'hashicorp'@'%' IDENTIFIED BY 'Password123';
+GRANT ALL PRIVILEGES ON *.* TO 'hashicorp'@'%' WITH GRANT OPTION;
+CREATE USER 'hashicorp2'@'%' IDENTIFIED BY 'Password123';
+GRANT ALL PRIVILEGES ON *.* TO 'hashicorp2'@'%' WITH GRANT OPTION;

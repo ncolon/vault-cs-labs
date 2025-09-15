@@ -34,7 +34,7 @@ spec:
           - name: VAULT_ADDR
             value: "https://$VAULT_IP:8200"
           - name: VAULT_CACERT
-            value: /opt/config/vault-server-cert.pem
+            value: /opt/config/ca-cert.pem
         volumeMounts:
           - mountPath: /etc/vault
             name: config
@@ -42,6 +42,9 @@ spec:
             name: shared-data
           - name: config-volume
             mountPath: /opt/config
+        securityContext:
+          capabilities:
+            add: ["CAP_SETFCAP"]
       - image: nginx:alpine3.20
         name: nginx-container
         ports:
