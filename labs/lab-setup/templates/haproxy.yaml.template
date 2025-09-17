@@ -8,7 +8,7 @@ metadata:
 spec:
   containers:
   - name: haproxy
-    image: haproxy
+    image: docker.io/library/haproxy:latest
     ports:
       - containerPort: 8200
         hostPort: ${PORT}
