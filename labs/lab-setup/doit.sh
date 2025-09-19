@@ -100,9 +100,6 @@ function generateContainerVolumes() {
           export PORT=8220 ;;
       *)
           export PORT=8200
-          if [[ $USER == "itzuser" ]] ; then
-              export PORT=12443
-          fi
           ;;
   esac
   cat templates/haproxy.yaml.template | envsubst >> ${CLUSTERNAME}.yaml

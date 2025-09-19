@@ -88,9 +88,6 @@ for CLUSTERNAME in vault-primary vault-dr vault-replication; do
             export PORT=8220 ;;
         *)
             export PORT=8200
-            if [[ $USER == "itzuser" ]] ; then
-                export PORT=12443
-            fi
             ;;
     esac
 
