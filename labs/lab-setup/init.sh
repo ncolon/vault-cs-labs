@@ -1,5 +1,8 @@
 #!/bin/bash
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && pwd)"
+cd "$SCRIPT_DIR"
+
 test -e vault.hclic || {
     echo "Unable to find vault.hclic in $PWD."
     echo "Download the vault.hclic license file from https://ibm.biz/hc-ent-keys and place it on this folder"
