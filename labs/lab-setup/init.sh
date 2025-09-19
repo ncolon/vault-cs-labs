@@ -46,7 +46,7 @@ function buildVaultImage() {
           echo "Unsupported architecture: $ARCH" && exit 1
           ;;
   esac
-  podman build --build-arg ARCH=$ARCH_ALIAS -t vault-enterprise vault-image
+  podman build --build-arg ARCH=$ARCH_ALIAS -t vault-enterprise vault-image || exit 1
 }
 
 function generateCA() {
@@ -156,7 +156,7 @@ function vaultCLISetup() {
 }
 
 checkVaultLicense $BASEPATH/vault.hclic
-buildVaultImage
+# buildVaultImage
 generateCA $BASEPATH/certs
 generateCertificates $BASEPATH/certs $CLUSTERNAME
 generateContainerVolumes $CLUSTERNAME

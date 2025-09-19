@@ -8,7 +8,7 @@ metadata:
 spec:
   containers:
   - name: vault-enterprise
-    image: vault-enterprise
+    image: quay.io/ncolon_ibm/vault:1.19.8-ent
     volumeMounts:
     - mountPath: /opt/vault:z
       name: ${INSTANCE}-dir
