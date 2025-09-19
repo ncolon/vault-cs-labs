@@ -19,5 +19,5 @@ spec:
   volumes:
   - name: ${CLUSTERNAME}-dir
     hostPath:
-      path: ${PWD}/volumes/haproxy-${CLUSTERNAME}
+      path: /home/$USER/vault-cs-labs/labs/lab-setup/volumes/haproxy-${CLUSTERNAME}
       type: Directory

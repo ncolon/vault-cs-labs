@@ -110,7 +110,7 @@ function generateContainerVolumes() {
   mkdir -p ${VOLUMES}/haproxy-${CLUSTERNAME}
   cat ${TEMPLATES}/haproxy.cfg.template | envsubst > ${VOLUMES}/haproxy-${CLUSTERNAME}/haproxy.cfg
   cp "${CERTS}/${CLUSTERNAME}-tls.crt" ${VOLUMES}/haproxy-${CLUSTERNAME}/tls.crt
-  cp "${CERTS}/${CLUSTERNAME}-tls.key" ${VOLUMES}haproxy-${CLUSTERNAME}/tls.crt.key
+  cp "${CERTS}/${CLUSTERNAME}-tls.key" ${VOLUMES}/haproxy-${CLUSTERNAME}/tls.crt.key
 
   chmod -R go+r $VOLUMES
 }

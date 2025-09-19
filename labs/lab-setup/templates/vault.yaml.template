@@ -16,5 +16,5 @@ spec:
   volumes:
   - name: ${INSTANCE}-dir
     hostPath:
-      path: ${PWD}/volumes/${INSTANCE}
+      path: /home/$USER/vault-cs-labs/labs/lab-setup/volumes/${INSTANCE}
       type: Directory
