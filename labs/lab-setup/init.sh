@@ -46,7 +46,7 @@ function buildVaultImage() {
           echo "Unsupported architecture: $ARCH" && exit 1
           ;;
   esac
-  echo podman build --build-arg ARCH=$ARCH_ALIAS -t vault-enterprise vault-image || exit 1
+  podman build --build-arg ARCH=$ARCH_ALIAS -t vault-enterprise vault-image
 }
 
 function generateCA() {
