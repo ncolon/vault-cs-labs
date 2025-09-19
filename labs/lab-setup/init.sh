@@ -3,6 +3,11 @@
 BASEPATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && pwd)"
 export CLUSTERNAME=vault-primary
 
+CERTS="${BASEPATH}/certs"
+VOLUMES="${BASEPATH}/volumes"
+TEMPLATES="${BASEPATH}/templates"
+
+
 if [[ $USER == "itzuser" ]] ; then
     umask 022
 fi
@@ -82,16 +87,15 @@ function generateContainerVolumes() {
   test -e ${BASEPATH}/${CLUSTERNAME}.yaml && rm ${BASEPATH}/${CLUSTERNAME}.yaml
   for i in $(seq 1 3); do
     export INSTANCE="${CLUSTERNAME}-${i}"
-    CERTS="${BASEPATH}/certs"
-    cat templates/vault.yaml.template | envsubst >> ${BASEPATH}/${CLUSTERNAME}.yaml
-    mkdir -p volumes/${INSTANCE}/tls volumes/${INSTANCE}/data
-    chmod 755 volumes/${INSTANCE}/tls
-    chmod 777 volumes/${INSTANCE}/data
-    cp "${CERTS}/ca-cert.pem" volumes/${INSTANCE}/tls/ca.pem
-    cp "${CERTS}/${CLUSTERNAME}-tls.key" volumes/${INSTANCE}/tls/tls.key
-    cp "${CERTS}/${CLUSTERNAME}-tls.crt" volumes/${INSTANCE}/tls/tls.crt
-    cp vault.hclic volumes/${INSTANCE}/
-    cat templates/config.hcl.template | envsubst > volumes/${INSTANCE}/config.hcl
+    cat ${TEMPLATES}/vault.yaml.template | envsubst >> ${BASEPATH}/${CLUSTERNAME}.yaml
+    mkdir -p ${VOLUMES}/${INSTANCE}/tls ${VOLUMES}/${INSTANCE}/data
+    chmod 755 ${VOLUMES}/${INSTANCE}/tls
+    chmod 777 ${VOLUMES}/${INSTANCE}/data
+    cp "${CERTS}/ca-cert.pem" ${VOLUMES}/${INSTANCE}/tls/ca.pem
+    cp "${CERTS}/${CLUSTERNAME}-tls.key" ${VOLUMES}/${INSTANCE}/tls/tls.key
+    cp "${CERTS}/${CLUSTERNAME}-tls.crt" ${VOLUMES}/${INSTANCE}/tls/tls.crt
+    cp ${BASEPATH}/vault.hclic ${VOLUMES}/${INSTANCE}/
+    cat ${TEMPLATES}/config.hcl.template | envsubst > ${VOLUMES}/${INSTANCE}/config.hcl
   done
   case ${CLUSTERNAME} in
       vault-dr)
@@ -102,13 +106,13 @@ function generateContainerVolumes() {
           export PORT=8200
           ;;
   esac
-  cat templates/haproxy.yaml.template | envsubst >> ${CLUSTERNAME}.yaml
-  mkdir -p volumes/haproxy-${CLUSTERNAME}
-  cat templates/haproxy.cfg.template | envsubst > volumes/haproxy-${CLUSTERNAME}/haproxy.cfg
-  cp "${CERTS}/${CLUSTERNAME}-tls.crt" volumes/haproxy-${CLUSTERNAME}/tls.crt
-  cp "${CERTS}/${CLUSTERNAME}-tls.key" volumes/haproxy-${CLUSTERNAME}/tls.crt.key
+  cat ${TEMPLATES}/haproxy.yaml.template | envsubst >> ${BASEPATH}//${CLUSTERNAME}.yaml
+  mkdir -p ${VOLUMES}/haproxy-${CLUSTERNAME}
+  cat ${TEMPLATES}/haproxy.cfg.template | envsubst > ${VOLUMES}/haproxy-${CLUSTERNAME}/haproxy.cfg
+  cp "${CERTS}/${CLUSTERNAME}-tls.crt" ${VOLUMES}/haproxy-${CLUSTERNAME}/tls.crt
+  cp "${CERTS}/${CLUSTERNAME}-tls.key" ${VOLUMES}haproxy-${CLUSTERNAME}/tls.crt.key
 
-  chmod -R go+r volumes
+  chmod -R go+r $VOLUMES
 }
 
 function unsealVaultCluster() {
