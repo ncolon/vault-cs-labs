@@ -146,6 +146,9 @@ function vaultCLISetup() {
   echo "export VAULT_CACERT=\"${BASEPATH}/certs/ca-cert.pem\""
   echo "export VAULT_TLS_SERVER_NAME=vault.server"
   echo "================================================================"
+  echo "export VAULT_ADDR=https://localhost:${PORT}" > $CLUSTERNAME.env
+  echo "export VAULT_CACERT=\"${BASEPATH}/certs/ca-cert.pem\"" >> $CLUSTERNAME.env
+  echo "export VAULT_TLS_SERVER_NAME=vault.server" >> $CLUSTERNAME.env
 }
 
 checkVaultLicense $BASEPATH/vault.hclic
@@ -155,4 +158,3 @@ generateCertificates $BASEPATH/certs $CLUSTERNAME
 generateContainerVolumes $CLUSTERNAME
 unsealVaultCluster $CLUSTERNAME
 vaultCLISetup $CLUSTERNAME
-
