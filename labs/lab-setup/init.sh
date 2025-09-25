@@ -144,6 +144,7 @@ function unsealVaultCluster() {
 }
 
 function vaultCLISetup() {
+  local CLUSTERNAME=$1
   local ROOT_TOKEN=$(grep "Initial Root Token" "${BASEPATH}/init-${CLUSTERNAME}.txt" | cut -d' ' -f4)
   echo "================================================================"
   echo "To set up your vault environment, export the following variables"
