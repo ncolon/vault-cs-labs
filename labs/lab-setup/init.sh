@@ -144,15 +144,18 @@ function unsealVaultCluster() {
 }
 
 function vaultCLISetup() {
+  local ROOT_TOKEN=$(grep "Initial Root Token" "${BASEPATH}/init-${CLUSTERNAME}.txt" | cut -d' ' -f4)
   echo "================================================================"
   echo "To set up your vault environment, export the following variables"
   echo "export VAULT_ADDR=https://localhost:${PORT}"
   echo "export VAULT_CACERT=\"${BASEPATH}/certs/ca-cert.pem\""
   echo "export VAULT_TLS_SERVER_NAME=vault.server"
+  echo "export VAULT_TOKEN=${ROOT_TOKEN}"
   echo "================================================================"
   echo "export VAULT_ADDR=https://localhost:${PORT}" > $BASEPATH/$CLUSTERNAME.env
   echo "export VAULT_CACERT=\"${BASEPATH}/certs/ca-cert.pem\"" >> $BASEPATH/$CLUSTERNAME.env
   echo "export VAULT_TLS_SERVER_NAME=vault.server" >> $BASEPATH/$CLUSTERNAME.env
+  echo "export VAULT_TOKEN=${ROOT_TOKEN}" >> $BASEPATH/$CLUSTERNAME.env
 }
 
 checkVaultLicense $BASEPATH/vault.hclic
